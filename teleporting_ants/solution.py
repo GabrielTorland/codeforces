@@ -18,7 +18,7 @@ class AntPort:
         self.n = n
         self.port_costs = np.zeros(n+1)
 
-    def add_to_cumsum(self, cost, i):
+    def add_to_cumsum(self, cost, i) -> None:
         self.port_costs[i+1] = self.port_costs[i] + cost
 
 
@@ -31,7 +31,7 @@ class AntPort:
         To find the lower bound portal we can use a binary search.
 
     """
-    def simulate(self, start):
+    def simulate(self, start) -> int:
         global MAX_OUT
         steps = 0
         x = start
@@ -45,8 +45,7 @@ class AntPort:
             cost = (x-self.y[i]) + (self.port_costs[i]-self.port_costs[l_b])
             # Store cost in cumulative sum array
             self.add_to_cumsum(cost, i)
-            if self.s[i] == '1':
-                steps += cost
+            steps += cost*self.s[i]
 
         return steps % MAX_OUT
     
@@ -57,16 +56,16 @@ def parse():
     n = int(lines[0])
     x = np.zeros(n)
     y = np.zeros(n)
-    s = np.zeros(n, dtype=str)
+    s = np.zeros(n)
     for i, l in enumerate(lines[1:]):
         tmp = l.split(' ')
         x[i] = int(tmp[0])
         y[i] = int(tmp[1])
-        s[i] = tmp[2]
+        s[i] = int(tmp[2])
     return x, y, s, n
 
 
 if __name__ == "__main__":
     x, y, s, n = parse()
     ant_port = AntPort(x, y, s, n)
-    print("Steps required: ", int(ant_port.simulate(0)+1) % MAX_OUT)
+    print("Steps: ", int(ant_port.simulate(0)+1) % MAX_OUT)
